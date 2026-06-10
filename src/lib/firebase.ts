@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getAuth, Auth } from "firebase/auth";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -25,9 +25,11 @@ if (!isConfigValid) {
 }
 
 // App 초기화 (서버 사이드 렌더링을 고려하여 중복 생성 방지)
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+const app = isConfigValid 
+  ? (getApps().length > 0 ? getApp() : initializeApp(firebaseConfig)) 
+  : undefined;
 
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
+export const db = app ? getFirestore(app) : ({} as Firestore);
+export const auth = app ? getAuth(app) : ({} as Auth);
+export const storage = app ? getStorage(app) : ({} as FirebaseStorage);
 export default app;
