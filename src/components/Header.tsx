@@ -4,9 +4,12 @@ import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Menu, X, ChevronDown, Globe } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export const Header: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -32,6 +35,7 @@ export const Header: React.FC = () => {
         { name: t.aboutMenu.leadership, href: "/about#leadership" },
         { name: t.aboutMenu.governance, href: "/about#governance" },
         { name: t.aboutMenu.network, href: "/about#network" },
+        { name: t.nav.careers, href: "/careers" },
       ],
     },
     {
@@ -94,21 +98,12 @@ export const Header: React.FC = () => {
         { name: t.insightsMenu.trends, href: "/insights#trends" },
       ],
     },
-    {
-      name: t.nav.careers,
-      key: "careers",
-      subItems: [
-        { name: t.careersMenu.positions, href: "/careers#positions" },
-        { name: t.careersMenu.internship, href: "/careers#internship" },
-        { name: t.careersMenu.culture, href: "/careers#culture" },
-      ],
-    },
   ];
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        scrolled || !isHome
           ? "bg-navy-deep/95 backdrop-blur-md border-b border-accent-gold/20 py-3 shadow-lg"
           : "bg-transparent py-5"
       }`}
