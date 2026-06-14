@@ -151,10 +151,9 @@ export default function Home() {
         {/* Background Video */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <iframe
-            className="absolute top-1/2 left-1/2 w-[300vw] h-[300vw] md:w-[150vw] md:h-[150vw] lg:w-[120vw] lg:h-[120vw] min-w-[100vw] min-h-[100vh] -translate-x-1/2 -translate-y-1/2 opacity-30"
+            className="absolute top-1/2 left-1/2 w-[300vw] h-[300vw] md:w-[150vw] md:h-[150vw] lg:w-[120vw] lg:h-[120vw] min-w-[100vw] min-h-[100vh] -translate-x-1/2 -translate-y-1/2 opacity-30 border-0"
             src="https://www.youtube.com/embed/1jwyOicGYlk?autoplay=1&mute=1&loop=1&playlist=1jwyOicGYlk&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
             allow="autoplay; encrypted-media"
-            frameBorder="0"
           />
         </div>
         <div className="absolute inset-0 bg-navy-deep/60 z-0" />
