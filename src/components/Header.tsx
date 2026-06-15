@@ -63,22 +63,7 @@ export const Header: React.FC = () => {
     {
       name: t.nav.portfolio,
       key: "portfolio",
-      subItems: [
-        { name: t.portfolioMenu.current, href: "/portfolio#current" },
-        { name: t.portfolioMenu.realized, href: "/portfolio#realized" },
-        { name: t.portfolioMenu.cases, href: "/portfolio#cases" },
-      ],
-    },
-    {
-      name: t.nav.industries,
-      key: "industries",
-      subItems: [
-        { name: t.industriesMenu.healthcare, href: "/industries#healthcare" },
-        { name: t.industriesMenu.industrial, href: "/industries#industrial" },
-        { name: t.industriesMenu.tech, href: "/industries#tech" },
-        { name: t.industriesMenu.consumer, href: "/industries#consumer" },
-        { name: t.industriesMenu.energy, href: "/industries#energy" },
-      ],
+      href: "/portfolio",
     },
     {
       name: t.nav.investors,
@@ -124,27 +109,38 @@ export const Header: React.FC = () => {
             <div
               key={item.key}
               className="relative group"
-              onMouseEnter={() => setActiveDropdown(item.key)}
-              onMouseLeave={() => setActiveDropdown(null)}
+              onMouseEnter={() => !item.href && setActiveDropdown(item.key)}
+              onMouseLeave={() => !item.href && setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 text-sm font-medium text-white/80 hover:text-accent-gold py-2 transition-colors cursor-pointer">
-                {item.name}
-                <ChevronDown className="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform duration-300" />
-              </button>
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  className="flex items-center gap-1 text-sm font-medium text-white/85 hover:text-accent-gold py-2 transition-colors cursor-pointer"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <>
+                  <button className="flex items-center gap-1 text-sm font-medium text-white/80 hover:text-accent-gold py-2 transition-colors cursor-pointer">
+                    {item.name}
+                    <ChevronDown className="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform duration-300" />
+                  </button>
 
-              {/* Dropdown Box */}
-              {activeDropdown === item.key && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-56 bg-navy-deep border border-accent-gold/20 rounded shadow-2xl overflow-hidden py-1 animate-fadeIn">
-                  {item.subItems.map((sub, index) => (
-                    <Link
-                      key={index}
-                      href={sub.href}
-                      className="block px-4 py-2.5 text-xs text-white/70 hover:text-navy-deep hover:bg-accent-gold transition-colors font-medium border-b border-white/5 last:border-0"
-                    >
-                      {sub.name}
-                    </Link>
-                  ))}
-                </div>
+                  {/* Dropdown Box */}
+                  {activeDropdown === item.key && item.subItems && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-56 bg-navy-deep border border-accent-gold/20 rounded shadow-2xl overflow-hidden py-1 animate-fadeIn">
+                      {item.subItems.map((sub, index) => (
+                        <Link
+                          key={index}
+                          href={sub.href}
+                          className="block px-4 py-2.5 text-xs text-white/70 hover:text-navy-deep hover:bg-accent-gold transition-colors font-medium border-b border-white/5 last:border-0"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}
@@ -210,21 +206,33 @@ export const Header: React.FC = () => {
           <div className="px-6 py-4 space-y-4">
             {navItems.map((item) => (
               <div key={item.key} className="space-y-1">
-                <div className="text-sm font-bold text-accent-gold border-b border-white/5 pb-1">
-                  {item.name}
-                </div>
-                <div className="grid grid-cols-2 gap-2 pl-2 py-1">
-                  {item.subItems.map((sub, index) => (
-                    <Link
-                      key={index}
-                      href={sub.href}
-                      onClick={() => setIsOpen(false)}
-                      className="text-xs text-white/70 hover:text-accent-gold py-1.5"
-                    >
-                      {sub.name}
-                    </Link>
-                  ))}
-                </div>
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="block text-sm font-bold text-accent-gold border-b border-white/5 pb-1 hover:text-white transition-colors"
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <>
+                    <div className="text-sm font-bold text-accent-gold border-b border-white/5 pb-1">
+                      {item.name}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 pl-2 py-1">
+                      {item.subItems?.map((sub, index) => (
+                        <Link
+                          key={index}
+                          href={sub.href}
+                          onClick={() => setIsOpen(false)}
+                          className="text-xs text-white/70 hover:text-accent-gold py-1.5"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             ))}
             <div className="pt-2 flex flex-col gap-2">
@@ -242,4 +250,5 @@ export const Header: React.FC = () => {
     </header>
   );
 };
+
 export default Header;
