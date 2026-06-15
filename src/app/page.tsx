@@ -148,68 +148,80 @@ export default function Home() {
     <div className="relative">
       {/* 1. HERO SECTION */}
       <section className="relative min-h-[90vh] flex items-center bg-navy-deep text-white overflow-hidden py-24">
-        {/* Background Video */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <iframe
-            className="absolute top-1/2 left-1/2 w-[300vw] h-[300vw] md:w-[150vw] md:h-[150vw] lg:w-[120vw] lg:h-[120vw] min-w-[100vw] min-h-[100vh] -translate-x-1/2 -translate-y-1/2 opacity-30 border-0"
-            src="https://www.youtube.com/embed/1jwyOicGYlk?autoplay=1&mute=1&loop=1&playlist=1jwyOicGYlk&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-          />
-        </div>
-        <div className="absolute inset-0 bg-navy-deep/60 z-0" />
-
         {/* Background Decorative Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] z-0" />
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-gold/5 rounded-full blur-3xl z-0" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="max-w-3xl space-y-8"
-          >
-            {/* Tagline */}
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 border border-accent-gold/30 bg-accent-gold/5 px-4 py-1.5 rounded-full">
-              <span className="h-2 w-2 rounded-full bg-accent-gold animate-pulse" />
-              <span className="text-xs font-semibold tracking-wider text-accent-gold uppercase">
-                PE + IB + Structured Capital Hybrid
-              </span>
-            </motion.div>
-
-            {/* Headline */}
-            <motion.h1
-              variants={itemVariants}
-              className="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-white"
-            >
-              {t.hero.headline}
-            </motion.h1>
-
-            {/* Subheadline */}
-            <motion.p
-              variants={itemVariants}
-              className="text-lg md:text-xl text-white/70 font-light leading-relaxed"
-            >
-              {t.hero.subheadline}
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link
-                href="/contact?type=deal"
-                className="inline-flex items-center justify-center gap-2 text-sm font-bold text-navy-deep bg-accent-gold px-8 py-4 rounded hover:bg-accent-gold-dark transition-all duration-300 shadow-lg shadow-accent-gold/10"
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Left Column: Headline and text */}
+            <div className="lg:col-span-7">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="space-y-8"
               >
-                {t.hero.ctaSubmit}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-white border border-white/20 hover:border-accent-gold hover:bg-white/5 px-8 py-4 rounded transition-all duration-300"
+                {/* Tagline */}
+                <motion.div variants={itemVariants} className="inline-flex items-center gap-2 border border-accent-gold/30 bg-accent-gold/5 px-4 py-1.5 rounded-full">
+                  <span className="h-2 w-2 rounded-full bg-accent-gold animate-pulse" />
+                  <span className="text-xs font-semibold tracking-wider text-accent-gold uppercase">
+                    PE + IB + Structured Capital Hybrid
+                  </span>
+                </motion.div>
+
+                {/* Headline */}
+                <motion.h1
+                  variants={itemVariants}
+                  className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white"
+                >
+                  {t.hero.headline}
+                </motion.h1>
+
+                {/* Subheadline */}
+                <motion.p
+                  variants={itemVariants}
+                  className="text-lg text-white/70 font-light leading-relaxed"
+                >
+                  {t.hero.subheadline}
+                </motion.p>
+
+                {/* CTA Buttons */}
+                <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 pt-4">
+                  <Link
+                    href="/contact?type=deal"
+                    className="inline-flex items-center justify-center gap-2 text-sm font-bold text-navy-deep bg-accent-gold px-8 py-4 rounded hover:bg-accent-gold-dark transition-all duration-300 shadow-lg shadow-accent-gold/10"
+                  >
+                    {t.hero.ctaSubmit}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-white border border-white/20 hover:border-accent-gold hover:bg-white/5 px-8 py-4 rounded transition-all duration-300"
+                  >
+                    {t.hero.ctaContact}
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </div>
+
+            {/* Right Column: Video Frame */}
+            <div className="lg:col-span-5 w-full">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="relative aspect-video w-full rounded-lg overflow-hidden border border-accent-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.15)] bg-black"
               >
-                {t.hero.ctaContact}
-              </Link>
-            </motion.div>
-          </motion.div>
+                <iframe
+                  className="w-full h-full border-0"
+                  src="https://www.youtube.com/embed/1jwyOicGYlk?autoplay=1&mute=1&loop=1&playlist=1jwyOicGYlk&controls=1&rel=0&modestbranding=1"
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                />
+              </motion.div>
+            </div>
+          </div>
         </div>
 
         {/* Scroll indicator */}
