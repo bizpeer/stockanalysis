@@ -13,6 +13,7 @@ export const dictionaries = {
       insights: "인사이트",
       careers: "인재채용",
       contact: "문의하기",
+      research: "AI 리서치",
     },
     aboutMenu: {
       overview: "회사 개요",
@@ -160,6 +161,7 @@ export const dictionaries = {
       insights: "Insights",
       careers: "Careers",
       contact: "Contact",
+      research: "AI Research",
     },
     aboutMenu: {
       overview: "Firm Overview",
