@@ -341,7 +341,7 @@ export default function ResearchStudio() {
   const callGeminiAPI = async (promptText: string, onChunk: (text: string) => void) => {
     const activeApiKey = apiKey || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!activeApiKey) {
-      throw new Error(language === "ko" ? "Gemini API Key가 설정되지 않았습니다. 상단 설정을 확인해 주세요." : "Gemini API Key is not set. Please update settings.");
+      throw new Error(language === "ko" ? "Gemini API Key가 설정되지 않았습니다. .env.local 설정을 확인해 주세요." : "Gemini API Key is not set. Please check your .env.local configuration.");
     }
     
     const response = await fetch(
@@ -493,7 +493,7 @@ export default function ResearchStudio() {
         guru: "munger",
         name: "Charlie Munger",
         avatar: "👓",
-        text: `Error during dialogue generation: ${e.message}. Please verify your API Key and try again.`
+        text: `Error during dialogue generation: ${e.message}. Please check your .env.local configuration.`
       }]);
     } finally {
       setRtIsDebating(false);
@@ -529,74 +529,9 @@ export default function ResearchStudio() {
                 : "Autonomous research engine powered by value-investing methodologies and programmatical financial checks."}
             </p>
           </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="flex items-center gap-2 bg-white/5 border border-white/10 hover:border-[#d4af37]/50 hover:bg-white/10 px-4 py-2 rounded text-xs transition-all cursor-pointer"
-            >
-              <Settings className="w-4 h-4 text-[#d4af37]" />
-              <span>{language === "ko" ? "API 설정" : "API Setup"}</span>
-            </button>
-          </div>
         </div>
 
-        {/* Settings Modal Inline */}
-        <AnimatePresence>
-          {showSettings && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="bg-white/5 border border-[#d4af37]/20 p-6 rounded-lg backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-6"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm font-bold text-[#d4af37]">
-                  <Key className="w-4 h-4" />
-                  <span>Gemini API Credentials</span>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase text-white/50 tracking-wider">Gemini API Key</label>
-                  <input
-                    type="password"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="AIzaSy..."
-                    className="w-full bg-[#070b19] border border-white/15 px-4 py-3 rounded text-sm text-white focus:outline-none focus:border-[#d4af37]"
-                  />
-                  <p className="text-[10px] text-white/40">
-                    Your key is saved in LocalStorage and never transmitted outside Google APIs.
-                  </p>
-                </div>
-              </div>
 
-              <div className="space-y-4 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase text-white/50 tracking-wider">Select Model</label>
-                  <select
-                    value={selectedModel}
-                    onChange={(e) => setSelectedModel(e.target.value)}
-                    className="w-full bg-[#070b19] border border-white/15 px-4 py-3 rounded text-sm text-white focus:outline-none focus:border-[#d4af37]"
-                  >
-                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended - Fast)</option>
-                    <option value="gemini-2.5-pro">Gemini 2.5 Pro (Recommended - Highly Logical)</option>
-                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                  </select>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4">
-                  <button
-                    onClick={() => saveSettings(apiKey, selectedModel)}
-                    className="bg-[#d4af37] text-navy-deep px-6 py-2.5 rounded font-bold text-xs hover:bg-[#b8952d] transition-all cursor-pointer"
-                  >
-                    Save & Initialize
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Navigation Tabs */}
         <div className="flex border-b border-white/10 gap-2">
@@ -675,19 +610,12 @@ export default function ResearchStudio() {
 
                 <button
                   onClick={handleStartResearch}
-                  disabled={isResearching || !companyName.trim() || !apiKey}
+                  disabled={isResearching || !companyName.trim()}
                   className="w-full flex items-center justify-center gap-2 bg-[#d4af37] disabled:bg-white/10 text-navy-deep disabled:text-white/30 font-bold text-xs py-4 rounded hover:bg-[#b8952d] transition-all cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>{isResearching ? "Running Research..." : "Launch Research Agent"}</span>
                 </button>
-                
-                {!apiKey && (
-                  <p className="text-[10px] text-red-400 flex items-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    <span>Please configure your Gemini API Key first.</span>
-                  </p>
-                )}
               </div>
 
               {/* Skills Selector */}
