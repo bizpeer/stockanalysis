@@ -20,19 +20,19 @@ export function formatFinancialNumber(num: number, unit: string = ""): string {
     return `${num.toFixed(2)}${unit}`;
   }
   if (absVal >= 1e12) {
-    return `${(num / 1e12).toFixed(2)}T`;
+    return `${(num / 1e12).toFixed(2)}조 (T)`;
   }
   if (absVal >= 1e9) {
-    return `${(num / 1e9).toFixed(2)}B`;
+    return `${(num / 1e9).toFixed(2)}십억 (B)`;
   }
   if (absVal >= 1e6) {
-    return `${(num / 1e6).toFixed(2)}M`;
+    return `${(num / 1e6).toFixed(2)}백만 (M)`;
   }
   return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 /**
- * 1. Market Cap Verification (股价 × 总股本 vs 报告市值)
+ * 1. Market Cap Verification (주가 × 발행주식수 vs 공시 시가총액)
  */
 export function verifyMarketCap(
   price: number,
@@ -45,26 +45,26 @@ export function verifyMarketCap(
   
   let log = "";
   log += "============================================================\n";
-  log += "市值验算 (Market Cap Verification)\n";
+  log += "시가총액 검증 (Market Cap Verification)\n";
   log += "============================================================\n";
-  log += `  股价 (Price):       ${price} ${currency}\n`;
-  log += `  总股本 (Shares):    ${formatFinancialNumber(shares)}\n`;
-  log += `  计算市值:           ${formatFinancialNumber(calculated)} ${currency}\n`;
-  log += `  报告市值:           ${formatFinancialNumber(reportedCap)} ${currency}\n`;
-  log += `  偏差:               ${deviation.toFixed(2)}%\n\n`;
+  log += `  주가 (Price):             ${price} ${currency}\n`;
+  log += `  총 발행주식수 (Shares):    ${formatFinancialNumber(shares)}\n`;
+  log += `  계산 시가총액 (Calculated): ${formatFinancialNumber(calculated)} ${currency}\n`;
+  log += `  공시 시가총액 (Reported):   ${formatFinancialNumber(reportedCap)} ${currency}\n`;
+  log += `  편차 (Deviation):          ${deviation.toFixed(2)}%\n\n`;
 
   let success = false;
   if (deviation > 5) {
-    log += `  ❌ 警告: 偏差 ${deviation.toFixed(1)}% > 5%, 请检查:\n`;
-    log += `     - 股本是否为最新（回购/增发）?\n`;
-    log += `     - 币种单位是否一致（港币 vs 人民币 vs 美元）?\n`;
-    log += `     - 股价是否为最新?\n`;
+    log += `  ❌ 경고: 편차 ${deviation.toFixed(1)}% > 5%, 다음 사항을 점검하세요:\n`;
+    log += `     - 발행주식수가 최신 상태인지 확인 (자사주 매입/증자 등)?\n`;
+    log += `     - 통화 단위가 일치하는지 확인 (원화 vs 달러 vs 위안화 등)?\n`;
+    log += `     - 주가가 최신 상태인지 확인?\n`;
     success = false;
   } else if (deviation > 1) {
-    log += `  ⚠️  偏差 ${deviation.toFixed(1)}% 在可接受范围, 可能因股价波动/股本变化\n`;
+    log += `  ⚠️ 편차 ${deviation.toFixed(1)}% 는 허용 범위 내에 있습니다. 주가 변동 또는 발행주식수 변화에 따른 차이일 수 있습니다.\n`;
     success = true;
   } else {
-    log += `  ✅ 验证通过, 偏差仅 ${deviation.toFixed(2)}%\n`;
+    log += `  ✅ 검증 통과, 편차 단 ${deviation.toFixed(2)}%\n`;
     success = true;
   }
 
@@ -77,7 +77,7 @@ export function verifyMarketCap(
 }
 
 /**
- * 2. Valuation Metrics Verification (估值指标验算)
+ * 2. Valuation Metrics Verification (밸류에이션 지표 검증)
  */
 export function verifyValuation(
   price: number,
@@ -89,9 +89,9 @@ export function verifyValuation(
 ): VerificationResult {
   let log = "";
   log += "============================================================\n";
-  log += "估值指标验算 (Valuation Verification)\n";
+  log += "밸류에이션 지표 검증 (Valuation Verification)\n";
   log += "============================================================\n";
-  log += `  当前股价: ${price}\n\n`;
+  log += `  현재 주가 (Price): ${price}\n\n`;
 
   const results: any = {};
 
@@ -99,23 +99,23 @@ export function verifyValuation(
     if (eps !== 0) {
       const pe = price / eps;
       const ey = (eps / price) * 100;
-      log += `  PE (TTM):  ${price} / ${eps} = ${pe.toFixed(2)}x\n`;
-      log += `  盈利收益率: ${ey.toFixed(2)}%\n`;
+      log += `  PE (TTM):      ${price} / ${eps} = ${pe.toFixed(2)}배 (x)\n`;
+      log += `  이익수익률 (Earnings Yield): ${ey.toFixed(2)}%\n`;
       results.PE = pe;
       results.EarningsYield = ey;
     } else {
-      log += `  PE: EPS为0, 无法计算\n`;
+      log += `  PE: EPS가 0이므로 계산할 수 없습니다.\n`;
     }
   }
 
   if (bvps !== undefined && bvps !== null) {
     if (bvps !== 0) {
       const pb = price / bvps;
-      log += `  PB:        ${price} / ${bvps} = ${pb.toFixed(2)}x\n`;
+      log += `  PB:            ${price} / ${bvps} = ${pb.toFixed(2)}배 (x)\n`;
       results.PB = pb;
       if (eps !== undefined && eps !== 0) {
         const roe = (eps / bvps) * 100;
-        log += `  ROE:       ${eps} / ${bvps} = ${roe.toFixed(2)}%\n`;
+        log += `  ROE:           ${eps} / ${bvps} = ${roe.toFixed(2)}%\n`;
         results.ROE = roe;
       }
     }
@@ -125,8 +125,8 @@ export function verifyValuation(
     if (fcfPerShare !== 0) {
       const pfcf = price / fcfPerShare;
       const fcfYield = (fcfPerShare / price) * 100;
-      log += `  P/FCF:     ${price} / ${fcfPerShare} = ${pfcf.toFixed(2)}x\n`;
-      log += `  FCF Yield: ${fcfYield.toFixed(2)}%\n`;
+      log += `  P/FCF:         ${price} / ${fcfPerShare} = ${pfcf.toFixed(2)}배 (x)\n`;
+      log += `  FCF Yield:     ${fcfYield.toFixed(2)}%\n`;
       results.P_FCF = pfcf;
       results.FCF_Yield = fcfYield;
     }
@@ -135,7 +135,7 @@ export function verifyValuation(
   if (dividend !== undefined && dividend !== null) {
     if (price !== 0) {
       const divYield = (dividend / price) * 100;
-      log += `  股息率:    ${dividend} / ${price} = ${divYield.toFixed(2)}%\n`;
+      log += `  배당수익률 (Dividend Yield): ${dividend} / ${price} = ${divYield.toFixed(2)}%\n`;
       results.Dividend_Yield = divYield;
     }
   }
@@ -143,12 +143,12 @@ export function verifyValuation(
   if (revenuePerShare !== undefined && revenuePerShare !== null) {
     if (revenuePerShare !== 0) {
       const ps = price / revenuePerShare;
-      log += `  PS:        ${price} / ${revenuePerShare} = ${ps.toFixed(2)}x\n`;
+      log += `  PS:            ${price} / ${revenuePerShare} = ${ps.toFixed(2)}배 (x)\n`;
       results.PS = ps;
     }
   }
 
-  log += "\n  ✅ 以上指标已使用精确计算, 无浮点误差\n";
+  log += "\n  ✅ 위의 지표들은 부동 소수점 오차 없이 정확한 계산식으로 연산되었습니다.\n";
 
   return {
     success: true,
@@ -159,7 +159,7 @@ export function verifyValuation(
 }
 
 /**
- * 3. Cross-Source Data Validation (多源交叉验证)
+ * 3. Cross-Source Data Validation (다중 소스 크로스 검증)
  */
 export function crossValidate(
   fieldName: string,
@@ -169,7 +169,7 @@ export function crossValidate(
 ): VerificationResult {
   let log = "";
   log += "============================================================\n";
-  log += `交叉验证: ${fieldName} (Cross-Validation)\n`;
+  log += `크로스 검증: ${fieldName} (Cross-Validation)\n`;
   log += "============================================================\n";
 
   const sources = Object.keys(sourceValues);
@@ -184,8 +184,8 @@ export function crossValidate(
   const n = sortedVals.length;
   const median = n % 2 === 1 ? sortedVals[Math.floor(n / 2)] : (sortedVals[n / 2 - 1] + sortedVals[n / 2]) / 2;
 
-  log += `  数据来源数: ${sources.length}\n`;
-  log += `  参考中位数: ${formatFinancialNumber(median, unit)}\n\n`;
+  log += `  데이터 소스 개수: ${sources.length}\n`;
+  log += `  참고 중위값:     ${formatFinancialNumber(median, unit)}\n\n`;
 
   let allOk = true;
   const itemResults: any[] = [];
@@ -196,19 +196,19 @@ export function crossValidate(
     if (dev > tolerancePct) {
       allOk = false;
     }
-    log += `  ${status} ${src.padEnd(20)}: ${formatFinancialNumber(val, unit)}  (偏差 ${dev.toFixed(2)}%)\n`;
+    log += `  ${status} ${src.padEnd(20)}: ${formatFinancialNumber(val, unit)}  (편차 ${dev.toFixed(2)}%)\n`;
     itemResults.push({ source: src, value: val, deviation: dev, ok: dev <= tolerancePct });
   }
 
   log += "\n";
   if (allOk) {
-    log += `  ✅ 所有来源偏差 ≤ ${tolerancePct}%, 数据一致\n`;
+    log += `  ✅ 모든 데이터 소스의 편차가 ≤ ${tolerancePct}% 이내로 일관성이 있습니다.\n`;
   } else {
-    log += `  ⚠️  存在来源偏差 > ${tolerancePct}%, 请核实差异原因\n`;
-    log += `     建议: 优先采用公司年报/交易所数据\n`;
+    log += `  ⚠️ 편차가 > ${tolerancePct}% 를 초과하는 소스가 존재하므로 차이 원인을 확인해 주세요.\n`;
+    log += `     권장사항: 기업 사업보고서 및 거래소 공시 데이터를 최우선으로 적용하세요.\n`;
   }
 
-  log += `\n  共识值 (加权中位数): ${formatFinancialNumber(median, unit)}\n`;
+  log += `\n  컨센서스 값 (가중 중위값): ${formatFinancialNumber(median, unit)}\n`;
 
   return {
     success: allOk,
@@ -219,12 +219,12 @@ export function crossValidate(
 }
 
 /**
- * 4. Benford's Law Check
+ * 4. Benford's Law Check (벤포드의 법칙 검증)
  */
 export function benfordCheck(values: number[]): VerificationResult {
   let log = "";
   log += "============================================================\n";
-  log += "Benford定律检测 (Financial Data Fabrication Check)\n";
+  log += "벤포드의 법칙 검증 (재무 데이터 조작 가능성 검증)\n";
   log += "============================================================\n";
 
   const digits: number[] = [];
@@ -244,7 +244,7 @@ export function benfordCheck(values: number[]): VerificationResult {
 
   const n = digits.length;
   if (n < 30) {
-    log += `  ⚠️  样本量不足: ${n} < 30, Benford分析不可靠(通常需要50+)\n`;
+    log += `  ⚠️ 표본 크기 부족: ${n} < 30개로 벤포드 분석 결과가 신뢰하기 어렵습니다 (보통 50개 이상 권장).\n`;
   }
 
   const counts: Record<number, number> = {};
@@ -274,33 +274,33 @@ export function benfordCheck(values: number[]): VerificationResult {
   mad = mad / 9;
 
   let conformity = "";
-  if (mad < 0.006) conformity = "Close (高度符合)";
-  else if (mad < 0.012) conformity = "Acceptable (可接受)";
-  else if (mad < 0.015) conformity = "Marginally Acceptable (边缘)";
-  else conformity = "Nonconforming (不符合 ⚠️)";
+  if (mad < 0.006) conformity = "높음 (Close)";
+  else if (mad < 0.012) conformity = "보통 (Acceptable)";
+  else if (mad < 0.015) conformity = "경계 (Marginally)";
+  else conformity = "비적합 (Nonconforming ⚠️)";
 
-  log += `  样本量:    ${n}\n`;
-  log += `  MAD:       ${mad.toFixed(6)}\n`;
-  log += `  Chi-sq:    ${chi2.toFixed(2)}\n`;
-  log += `  符合度:    ${conformity}\n\n`;
+  log += `  표본 크기 (N): ${n}\n`;
+  log += `  MAD:          ${mad.toFixed(6)}\n`;
+  log += `  Chi-sq:       ${chi2.toFixed(2)}\n`;
+  log += `  적합도:       ${conformity}\n\n`;
 
-  log += `  首位数    观测    期望    偏差\n`;
+  log += `  첫째자리수   관측값   기대값   편차\n`;
   log += `  ------------------------------\n`;
   for (let d = 1; d <= 9; d++) {
     const obs = observed[d];
     const exp = BENFORD[d];
     const dev = obs - exp;
     const flag = Math.abs(dev) > 0.03 ? " ⚠️" : "";
-    log += `  ${d}         ${obs.toFixed(3)}   ${exp.toFixed(3)}   ${dev >= 0 ? "+" : ""}${dev.toFixed(3)}${flag}\n`;
+    log += `  ${d}            ${obs.toFixed(3)}   ${exp.toFixed(3)}   ${dev >= 0 ? "+" : ""}${dev.toFixed(3)}${flag}\n`;
   }
 
   log += "\n";
   const success = mad < 0.015;
   if (success) {
-    log += "  ✅ 数据首位数字分布符合Benford定律\n";
+    log += "  ✅ 데이터 첫째자리수 분포가 벤포드의 법칙에 부합합니다.\n";
   } else {
-    log += "  ❌ 数据首位数字分布异常, 可能存在人为调整\n";
-    log += "     提示: 不符合Benford定律不一定是造假, 但值得进一步调查\n";
+    log += "  ❌ 데이터 첫째자리수 분포가 비정상적이며 인위적 조정 가능성이 있습니다.\n";
+    log += "     팁: 벤포드 법칙 비적합이 반드시 조작을 의미하는 것은 아니나 추가 조사를 권장합니다.\n";
   }
 
   return {
@@ -312,7 +312,7 @@ export function benfordCheck(values: number[]): VerificationResult {
 }
 
 /**
- * 5. Three-Scenario Valuation (三情景估值)
+ * 5. Three-Scenario Valuation (3가지 시나리오 가치평가)
  */
 export interface ThreeScenarioItem {
   name: string;
@@ -338,19 +338,19 @@ export function calculateThreeScenarioValuation(
 ): VerificationResult {
   let log = "";
   log += "============================================================\n";
-  log += "三情景估值模型 (Three-Scenario Valuation)\n";
+  log += "3시나리오 가치평가 모델 (Three-Scenario Valuation)\n";
   log += "============================================================\n";
-  log += `  当前股价: ${currentPrice} ${currency}\n`;
-  log += `  当前EPS:  ${currentEps}\n`;
-  log += `  预测期:   ${years}年\n\n`;
+  log += `  현재 주가:  ${currentPrice} ${currency}\n`;
+  log += `  현재 EPS:   ${currentEps}\n`;
+  log += `  예측 기간:  ${years}개년\n\n`;
 
   const scenarios = [
-    { name: "乐观 (Bull)", growth: growthOptimistic, pe: peOptimistic },
-    { name: "中性 (Base)", growth: growthNeutral, pe: peNeutral },
-    { name: "悲观 (Bear)", growth: growthPessimistic, pe: pePessimistic }
+    { name: "낙관 (Bull)", growth: growthOptimistic, pe: peOptimistic },
+    { name: "중립 (Base)", growth: growthNeutral, pe: peNeutral },
+    { name: "비관 (Bear)", growth: growthPessimistic, pe: pePessimistic }
   ];
 
-  log += `  情景         年增速     目标PE   目标EPS    目标股价    涨跌幅\n`;
+  log += `  시나리오      연간성장률   목표 PE   목표 EPS   목표주가    예상수익률\n`;
   log += `  --------------------------------------------------------------\n`;
 
   const results: ThreeScenarioItem[] = [];
@@ -364,7 +364,7 @@ export function calculateThreeScenarioValuation(
     const targetPrice = futureEps * sc.pe;
     const change = currentPrice !== 0 ? ((targetPrice - currentPrice) / currentPrice) * 100 : 0;
 
-    log += `  ${sc.name.padEnd(12)} ${(sc.growth * 100).toFixed(0).padStart(5)}%   ${sc.pe.toFixed(0).padStart(5)}x    ${futureEps.toFixed(2).padStart(8)}   ${targetPrice.toFixed(1).padStart(9)}   ${change >= 0 ? "+" : ""}${change.toFixed(1)}%\n`;
+    log += `  ${sc.name.padEnd(10)} ${(sc.growth * 100).toFixed(0).padStart(5)}%   ${sc.pe.toFixed(0).padStart(5)}x    ${futureEps.toFixed(2).padStart(8)}   ${targetPrice.toFixed(1).padStart(9)}   ${change >= 0 ? "+" : ""}${change.toFixed(1)}%\n`;
 
     results.push({
       name: sc.name,
@@ -376,7 +376,7 @@ export function calculateThreeScenarioValuation(
     });
   }
 
-  log += "\n  ✅ 所有计算已完成, 结果符合可审计复现标准\n";
+  log += "\n  ✅ 모든 계산이 완료되었으며, 감사 및 재현이 가능한 계산식입니다.\n";
 
   return {
     success: true,
